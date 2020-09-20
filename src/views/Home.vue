@@ -1,15 +1,13 @@
 <template>
   <div class="home">
     <h1 class="title is-4 mt-4 mr-4 ml-4">
-      自分のブログなどの発信を<br />一つにまとめることができます。
+      自分のブログなどの発信を<br />一つのページにまとめることができます。
     </h1>
 
-    <div>
-      <router-link to="/users/testJapan">
-        <button class="button is-link mb-3 mt-4 is-rounded">
-          TwiLinkを作成🏃
-        </button>
-      </router-link>
+    <div @click="authWithTwitter">
+      <button class="button is-link mb-3 mt-4 is-rounded">
+        TwiLinkを作成🏃
+      </button>
     </div>
 
     <div>
@@ -38,10 +36,26 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, reactive } from 'vue'
+import { Auth, provider } from '@/main'
+import router from '../router/index'
 
 export default defineComponent({
   name: 'Home',
-  components: {}
+  components: {},
+  setup() {
+    const state = reactive({
+      userData: {}
+    })
+    const authWithTwitter = async () => {
+      const userCredential = await Auth.signInWithPopup(provider)
+      router.push(`/users/${userCredential.additionalUserInfo?.username}`)
+    }
+
+    return {
+      userData: state.userData,
+      authWithTwitter
+    }
+  }
 })
 </script>
